@@ -2,123 +2,99 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const HevaApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HevaApp extends StatelessWidget {
+  const HevaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Hello World',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Mi primera app Flutter'),
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-        ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+      title: 'HEVA Compliance',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+
+        
+          Image.asset(
+            'assets/images/fondo_heva.jpg',
+            fit: BoxFit.cover,
+          ),
+
+         
+          Container(
+            color: Colors.black.withValues(alpha: 0.45),
+          ),
+
+          
+          SafeArea(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 1. TEXT
+
+                
+                  Image.asset(
+                    'assets/images/icono.png',
+                    width: 120,
+                    height: 120,
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // Logotipo
+                  Image.asset(
+                    'assets/images/logotipo_heva.png',
+                    width: 550,
+                    fit: BoxFit.contain,
+                  ),
+
+                  const SizedBox(height: 30),
+
                   const Text(
-                    'Hello World',
-                    textAlign: TextAlign.center,
+                    '¡Bienvenido!',
                     style: TextStyle(
+                      color: Colors.white,
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
 
-                  // 2. ROW
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Text('Uno'),
-                      Text('Dos'),
-                      Text('Tres'),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 3. CONTAINER
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade100,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: 2,
-                      ),
-                    ),
-                    child: const Text(
-                      'Soy un Container',
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: Text(
+                      'Soluciones jurídicas, mediación y '
+                      'cumplimiento normativo a tu alcance.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 4. STACK
-                  Center(
-                    child: SizedBox(
-                      width: 250,
-                      height: 120,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 250,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              color: Colors.orange.shade200,
-                              borderRadius:
-                                  BorderRadius.circular(15),
-                            ),
-                          ),
-                          const Text(
-                            'Texto sobrepuesto',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 5. COLUMN
-                  const Column(
-                    children: [
-                      Text('Primera línea'),
-                      Text('Segunda línea'),
-                      Text('Tercera línea'),
-                    ],
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
