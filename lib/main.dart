@@ -1,9 +1,20 @@
 
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -87,6 +98,8 @@ class _PokemonPageState extends State<PokemonPage> {
 
   late Future<Pokemon> pokemon;
 
+  bool isSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -100,6 +113,54 @@ class _PokemonPageState extends State<PokemonPage> {
       setState(() {
         pokemon = fetchPokemon(name);
       });
+    }
+  }
+
+  // Funcion para guardar Pokemon en Firebase
+  Future<void> savePokemon(Pokemon p) async {
+    if (isSaving) return;
+
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('pokemones')
+          .doc(p.id.toString())
+          .set({
+        'id': p.id,
+        'name': p.name,
+        'height': p.height,
+        'weight': p.weight,
+        'image': p.image,
+        'types': p.types,
+        'fechaRegistro': FieldValue.serverTimestamp(),
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${p.name.toUpperCase()} guardado en Firebase'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al guardar en Firebase: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSaving = false;
+        });
+      }
     }
   }
 
@@ -211,6 +272,37 @@ class _PokemonPageState extends State<PokemonPage> {
                               Text(
                                 'Peso: ${p.weight / 10} kg',
                                 style: const TextStyle(fontSize: 18),
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Boton para guardar en Firebase
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: isSaving
+                                      ? null
+                                      : () => savePokemon(p),
+                                  icon: isSaving
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(Icons.cloud_upload),
+                                  label: Text(
+                                    isSaving
+                                        ? 'Guardando...'
+                                        : 'Guardar en Firebase',
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(15),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
